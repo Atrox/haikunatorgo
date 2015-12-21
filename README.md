@@ -26,42 +26,42 @@ func main() {
   haikunator := haikunator.NewHaikunator()
 
   // default usage
-  haikunator.haikunate() // => "wispy-dust-1337"
+  haikunator.Haikunate() // => "wispy-dust-1337"
 
   // custom length (default=4)
   haikunator.tokenLength = 9
-  haikunator.haikunate() // => "patient-king-887265"
+  haikunator.Haikunate() // => "patient-king-887265"
 
   // use hex instead of numbers
   haikunator.tokenHex = true
-  haikunator.haikunate() // => "purple-breeze-98e1"
+  haikunator.Haikunate() // => "purple-breeze-98e1"
 
   // use custom chars instead of numbers/hex
   haikunator.tokenChars = "HAIKUNATE"
-  haikunator.haikunate() // => "summer-atom-IHEA"
+  haikunator.Haikunate() // => "summer-atom-IHEA"
 
   // don't include a token
   haikunator.tokenLength = 0
-  haikunator.haikunate() // => "cold-wildflower"
+  haikunator.Haikunate() // => "cold-wildflower"
 
   // use a different delimiter
   haikunator.delimiter = "."
-  haikunator.haikunate() // => "restless.sea.7976"
+  haikunator.Haikunate() // => "restless.sea.7976"
 
   // no token, space delimiter
   haikunator.tokenLength = 0
   haikunator.delimiter = " "
-  haikunator.haikunate() // => "delicate haze"
+  haikunator.Haikunate() // => "delicate haze"
 
   // no token, empty delimiter
   haikunator.tokenLength = 0
   haikunator.delimiter = ""
-  haikunator.haikunate() // => "billowingleaf"
+  haikunator.Haikunate() // => "billowingleaf"
 
   // custom nouns and/or adjectives
   haikunator.adjectives = []string{"red", "green", "blue"}
   haikunator.nouns = []string{"reindeer"}
-  haikunator.haikunate() // => "blue-reindeer-4252"
+  haikunator.Haikunate() // => "blue-reindeer-4252"
 }
 ```
 

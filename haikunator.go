@@ -59,7 +59,8 @@ func NewHaikunator() Haikunator {
 	}
 }
 
-func (h *Haikunator) haikunate() string {
+// Haikunate generates a random Heroku-like string
+func (h *Haikunator) Haikunate() string {
 	if h.tokenHex {
 		h.tokenChars = "0123456789abcdef"
 	}

@@ -8,7 +8,7 @@ import (
 
 func TestDefaultUse(t *testing.T) {
 	haikunator := NewHaikunator()
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(\\d{4})$", haiku)
 	if err != nil {
@@ -23,7 +23,7 @@ func TestHexUse(t *testing.T) {
 	haikunator := NewHaikunator()
 	haikunator.tokenHex = true
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(.{4})$", haiku)
 	if err != nil {
@@ -38,7 +38,7 @@ func TestDigitsUse(t *testing.T) {
 	haikunator := NewHaikunator()
 	haikunator.tokenLength = 9
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(\\d{9})$", haiku)
 	if err != nil {
@@ -54,7 +54,7 @@ func TestDigitsAsHexUse(t *testing.T) {
 	haikunator.tokenLength = 9
 	haikunator.tokenHex = true
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(.{9})$", haiku)
 	if err != nil {
@@ -67,8 +67,8 @@ func TestDigitsAsHexUse(t *testing.T) {
 
 func TestWontReturnSameForSubsequentCalls(t *testing.T) {
 	haikunator := NewHaikunator()
-	haiku1 := haikunator.haikunate()
-	haiku2 := haikunator.haikunate()
+	haiku1 := haikunator.Haikunate()
+	haiku2 := haikunator.Haikunate()
 
 	if haiku1 == haiku2 {
 		t.Error(haiku1, " matches with ", haiku2)
@@ -79,7 +79,7 @@ func TestDropsToken(t *testing.T) {
 	haikunator := NewHaikunator()
 	haikunator.tokenLength = 0
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))$", haiku)
 	if err != nil {
@@ -94,7 +94,7 @@ func TestPermitsOptionalDelimiter(t *testing.T) {
 	haikunator := NewHaikunator()
 	haikunator.delimiter = "."
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(\\.)((?:[a-z][a-z]+))(\\.)(\\d+)$", haiku)
 	if err != nil {
@@ -110,7 +110,7 @@ func TestSpaceDelimiterAndNoToken(t *testing.T) {
 	haikunator.delimiter = " "
 	haikunator.tokenLength = 0
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))( )((?:[a-z][a-z]+))$", haiku)
 	if err != nil {
@@ -126,7 +126,7 @@ func TestOneSingleWord(t *testing.T) {
 	haikunator.delimiter = ""
 	haikunator.tokenLength = 0
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))$", haiku)
 	if err != nil {
@@ -141,7 +141,7 @@ func TestCustomChars(t *testing.T) {
 	haikunator := NewHaikunator()
 	haikunator.tokenChars = "A"
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(AAAA)$", haiku)
 	if err != nil {
@@ -157,7 +157,7 @@ func TestCustomAdjectivesAndNouns(t *testing.T) {
 	haikunator.adjectives = []string{"red"}
 	haikunator.nouns = []string{"reindeer"}
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("(red)(-)(reindeer)(-)(\\d{4})$", haiku)
 	if err != nil {
@@ -173,7 +173,7 @@ func TestRemoveAdjectivesAndNouns(t *testing.T) {
 	haikunator.adjectives = []string{""}
 	haikunator.nouns = []string{""}
 
-	haiku := haikunator.haikunate()
+	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("(\\d{4})$", haiku)
 	if err != nil {
@@ -187,11 +187,11 @@ func TestRemoveAdjectivesAndNouns(t *testing.T) {
 func TestCustomRandom(t *testing.T) {
 	haikunator1 := NewHaikunator()
 	haikunator1.random = rand.New(rand.NewSource(123))
-	haiku1 := haikunator1.haikunate()
+	haiku1 := haikunator1.Haikunate()
 
 	haikunator2 := NewHaikunator()
 	haikunator2.random = rand.New(rand.NewSource(123))
-	haiku2 := haikunator2.haikunate()
+	haiku2 := haikunator2.Haikunate()
 
 	if haiku1 != haiku2 {
 		t.Error(haiku1, "does not match with ", haiku2)
