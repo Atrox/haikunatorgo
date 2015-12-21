@@ -10,19 +10,19 @@ import (
 
 // A Haikunator represents all options needed to use haikunate()
 type Haikunator struct {
-	adjectives  []string
-	nouns       []string
-	delimiter   string
-	tokenLength int
-	tokenHex    bool
-	tokenChars  string
-	random      *rand.Rand
+	Adjectives  []string
+	Nouns       []string
+	Delimiter   string
+	TokenLength int
+	TokenHex    bool
+	TokenChars  string
+	Random      *rand.Rand
 }
 
 // NewHaikunator creates a new Haikunator with all default options
 func NewHaikunator() Haikunator {
 	return Haikunator{
-		adjectives: []string{
+		Adjectives: []string{
 			"autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark",
 			"summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter",
 			"patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue",
@@ -36,7 +36,7 @@ func NewHaikunator() Haikunator {
 			"steep", "flat", "square", "round", "mute", "noisy", "hushy", "raspy", "soft",
 			"shrill", "rapid", "sweet", "curly", "calm", "jolly", "fancy", "plain", "shinny",
 		},
-		nouns: []string{
+		Nouns: []string{
 			"waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning",
 			"snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter",
 			"forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook",
@@ -51,31 +51,31 @@ func NewHaikunator() Haikunator {
 			"lab", "mud", "mode", "poetry", "tooth", "hall", "king", "queen", "lion", "tiger",
 			"penguin", "kiwi", "cake", "mouse", "rice", "coke", "hola", "salad", "hat",
 		},
-		delimiter:   "-",
-		tokenLength: 4,
-		tokenHex:    false,
-		tokenChars:  "0123456789",
-		random:      rand.New(rand.NewSource(time.Now().UnixNano())),
+		Delimiter:   "-",
+		TokenLength: 4,
+		TokenHex:    false,
+		TokenChars:  "0123456789",
+		Random:      rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
 // Haikunate generates a random Heroku-like string
 func (h *Haikunator) Haikunate() string {
-	if h.tokenHex {
-		h.tokenChars = "0123456789abcdef"
+	if h.TokenHex {
+		h.TokenChars = "0123456789abcdef"
 	}
 
-	adjective := h.adjectives[h.random.Intn(len(h.adjectives))]
-	noun := h.nouns[h.random.Intn(len(h.nouns))]
+	adjective := h.Adjectives[h.Random.Intn(len(h.Adjectives))]
+	noun := h.Nouns[h.Random.Intn(len(h.Nouns))]
 	var buffer bytes.Buffer
 
-	for i := 0; i < h.tokenLength; i++ {
-		buffer.WriteByte(h.tokenChars[h.random.Intn(len(h.tokenChars))])
+	for i := 0; i < h.TokenLength; i++ {
+		buffer.WriteByte(h.TokenChars[h.Random.Intn(len(h.TokenChars))])
 	}
 
 	token := buffer.String()
 	sections := deleteEmpty([]string{adjective, noun, token})
-	return strings.Join(sections, h.delimiter)
+	return strings.Join(sections, h.Delimiter)
 }
 
 func deleteEmpty(s []string) []string {

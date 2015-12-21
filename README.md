@@ -2,6 +2,7 @@
 
 [![Build Status](https://img.shields.io/travis/Atrox/haikunatorgo.svg?style=flat-square)](https://travis-ci.org/Atrox/haikunatorgo)
 [![Coverage Status](https://img.shields.io/coveralls/Atrox/haikunatorgo.svg?style=flat-square)](https://coveralls.io/r/Atrox/haikunatorgo)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/Atrox/haikunatorgo)
 
 Generate Heroku-like random names to use in your go applications.
 
@@ -29,38 +30,38 @@ func main() {
   haikunator.Haikunate() // => "wispy-dust-1337"
 
   // custom length (default=4)
-  haikunator.tokenLength = 9
+  haikunator.TokenLength = 9
   haikunator.Haikunate() // => "patient-king-887265"
 
   // use hex instead of numbers
-  haikunator.tokenHex = true
+  haikunator.TokenHex = true
   haikunator.Haikunate() // => "purple-breeze-98e1"
 
   // use custom chars instead of numbers/hex
-  haikunator.tokenChars = "HAIKUNATE"
+  haikunator.TokenChars = "HAIKUNATE"
   haikunator.Haikunate() // => "summer-atom-IHEA"
 
   // don't include a token
-  haikunator.tokenLength = 0
+  haikunator.TokenLength = 0
   haikunator.Haikunate() // => "cold-wildflower"
 
   // use a different delimiter
-  haikunator.delimiter = "."
+  haikunator.Delimiter = "."
   haikunator.Haikunate() // => "restless.sea.7976"
 
   // no token, space delimiter
-  haikunator.tokenLength = 0
-  haikunator.delimiter = " "
+  haikunator.TokenLength = 0
+  haikunator.Delimiter = " "
   haikunator.Haikunate() // => "delicate haze"
 
   // no token, empty delimiter
-  haikunator.tokenLength = 0
-  haikunator.delimiter = ""
+  haikunator.TokenLength = 0
+  haikunator.Delimiter = ""
   haikunator.Haikunate() // => "billowingleaf"
 
   // custom nouns and/or adjectives
-  haikunator.adjectives = []string{"red", "green", "blue"}
-  haikunator.nouns = []string{"reindeer"}
+  haikunator.Adjectives = []string{"red", "green", "blue"}
+  haikunator.Nouns = []string{"reindeer"}
   haikunator.Haikunate() // => "blue-reindeer-4252"
 }
 ```
@@ -71,16 +72,16 @@ The following options are available:
 
 ```go
 Haikunator{
-  adjectives: []string{"..."},
-  nouns: []string{"..."},
-  delimiter:   "-",
-  tokenLength: 4,
-  tokenHex:    false,
-  tokenChars:  "0123456789",
-  random:      rand.New(rand.NewSource(time.Now().UnixNano())),
+  Adjectives: []string{"..."},
+  Nouns: []string{"..."},
+  Delimiter:   "-",
+  TokenLength: 4,
+  TokenHex:    false,
+  TokenChars:  "0123456789",
+  Random:      rand.New(rand.NewSource(time.Now().UnixNano())),
 }
 ```
-*If ```tokenHex``` is true, it overrides any tokens specified in ```tokenChars```*
+*If ```TokenHex``` is true, it overrides any tokens specified in ```TokenChars```*
 
 ## Contributing
 
