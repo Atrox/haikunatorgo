@@ -197,3 +197,12 @@ func TestCustomRandom(t *testing.T) {
 		t.Error(haiku1, "does not match with ", haiku2)
 	}
 }
+
+func TestZeroLengthOptionsPanic(t *testing.T) {
+	haikunator := NewHaikunator()
+	haikunator.Adjectives = make([]string, 0)
+	haikunator.Nouns = make([]string, 0)
+	haikunator.TokenChars = ""
+
+	haikunator.Haikunate() // should not panic when generating random numbers
+}
