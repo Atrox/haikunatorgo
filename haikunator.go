@@ -65,12 +65,22 @@ func (h *Haikunator) Haikunate() string {
 		h.TokenChars = "0123456789abcdef"
 	}
 
-	adjective := h.Adjectives[h.Random.Intn(len(h.Adjectives))]
-	noun := h.Nouns[h.Random.Intn(len(h.Nouns))]
+	var adjective, noun string
+
+	if len(h.Adjectives) > 0 { // Random.Intn panics otherwise
+		adjective = h.Adjectives[h.Random.Intn(len(h.Adjectives))]
+	}
+
+	if len(h.Nouns) > 0 {
+		noun = h.Nouns[h.Random.Intn(len(h.Nouns))]
+	}
+
 	var buffer bytes.Buffer
 
-	for i := 0; i < h.TokenLength; i++ {
-		buffer.WriteByte(h.TokenChars[h.Random.Intn(len(h.TokenChars))])
+	if len(h.TokenChars) > 0 {
+		for i := 0; i < h.TokenLength; i++ {
+			buffer.WriteByte(h.TokenChars[h.Random.Intn(len(h.TokenChars))])
+		}
 	}
 
 	token := buffer.String()
