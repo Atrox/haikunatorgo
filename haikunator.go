@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // A Haikunator represents all options needed to use haikunate()
@@ -65,15 +66,27 @@ func (h *Haikunator) Haikunate() string {
 		h.TokenChars = "0123456789abcdef"
 	}
 
-	adjective := h.Adjectives[h.Random.Intn(len(h.Adjectives))]
-	noun := h.Nouns[h.Random.Intn(len(h.Nouns))]
-	var buffer bytes.Buffer
+	var adjective, noun string
 
-	for i := 0; i < h.TokenLength; i++ {
-		buffer.WriteByte(h.TokenChars[h.Random.Intn(len(h.TokenChars))])
+	if len(h.Adjectives) > 0 { // Random.Intn panics otherwise
+		adjective = h.Adjectives[h.Random.Intn(len(h.Adjectives))]
 	}
 
-	token := buffer.String()
+	if len(h.Nouns) > 0 {
+		noun = h.Nouns[h.Random.Intn(len(h.Nouns))]
+	}
+
+	var token string
+
+	if len(h.TokenChars) > 0 {
+		var buffer bytes.Buffer
+		for i := 0; i < h.TokenLength; i++ {
+			randomIndex := h.Random.Intn(utf8.RuneCountInString(h.TokenChars))
+			buffer.WriteRune([]rune(h.TokenChars)[randomIndex])
+		}
+		token = buffer.String()
+	}
+
 	sections := deleteEmpty([]string{adjective, noun, token})
 	return strings.Join(sections, h.Delimiter)
 }
