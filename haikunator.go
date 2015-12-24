@@ -75,15 +75,16 @@ func (h *Haikunator) Haikunate() string {
 		noun = h.Nouns[h.Random.Intn(len(h.Nouns))]
 	}
 
-	var buffer bytes.Buffer
+	var token string
 
 	if len(h.TokenChars) > 0 {
+		var buffer bytes.Buffer
 		for i := 0; i < h.TokenLength; i++ {
 			buffer.WriteByte(h.TokenChars[h.Random.Intn(len(h.TokenChars))])
 		}
+		token = buffer.String()
 	}
 
-	token := buffer.String()
 	sections := deleteEmpty([]string{adjective, noun, token})
 	return strings.Join(sections, h.Delimiter)
 }
