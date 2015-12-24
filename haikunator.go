@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // A Haikunator represents all options needed to use haikunate()
@@ -80,7 +81,8 @@ func (h *Haikunator) Haikunate() string {
 	if len(h.TokenChars) > 0 {
 		var buffer bytes.Buffer
 		for i := 0; i < h.TokenLength; i++ {
-			buffer.WriteByte(h.TokenChars[h.Random.Intn(len(h.TokenChars))])
+			randomIndex := h.Random.Intn(utf8.RuneCountInString(h.TokenChars))
+			buffer.WriteRune([]rune(h.TokenChars)[randomIndex])
 		}
 		token = buffer.String()
 	}
