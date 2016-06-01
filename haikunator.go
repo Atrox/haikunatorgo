@@ -20,38 +20,44 @@ type Haikunator struct {
 	Random      *rand.Rand
 }
 
+// Adjectives used by haikunator
+var adjectives = []string{
+	"aged", "ancient", "autumn", "billowing", "bitter", "black", "blue", "bold",
+	"broad", "broken", "calm", "cold", "cool", "crimson", "curly", "damp",
+	"dark", "dawn", "delicate", "divine", "dry", "empty", "falling", "fancy",
+	"flat", "floral", "fragrant", "frosty", "gentle", "green", "hidden", "holy",
+	"icy", "jolly", "late", "lingering", "little", "lively", "long", "lucky",
+	"misty", "morning", "muddy", "mute", "nameless", "noisy", "odd", "old",
+	"orange", "patient", "plain", "polished", "proud", "purple", "quiet", "rapid",
+	"raspy", "red", "restless", "rough", "round", "royal", "shiny", "shrill",
+	"shy", "silent", "small", "snowy", "soft", "solitary", "sparkling", "spring",
+	"square", "steep", "still", "summer", "super", "sweet", "throbbing", "tight",
+	"tiny", "twilight", "wandering", "weathered", "white", "wild", "winter", "wispy",
+	"withered", "yellow", "young",
+}
+
+// Nouns used by haikunator
+var nouns = []string{
+	"art", "band", "bar", "base", "bird", "block", "boat", "bonus",
+	"bread", "breeze", "brook", "bush", "butterfly", "cake", "cell", "cherry",
+	"cloud", "credit", "darkness", "dawn", "dew", "disk", "dream", "dust",
+	"feather", "field", "fire", "firefly", "flower", "fog", "forest", "frog",
+	"frost", "glade", "glitter", "grass", "hall", "hat", "haze", "heart",
+	"hill", "king", "lab", "lake", "leaf", "limit", "math", "meadow",
+	"mode", "moon", "morning", "mountain", "mouse", "mud", "night", "paper",
+	"pine", "poetry", "pond", "queen", "rain", "recipe", "resonance", "rice",
+	"river", "salad", "scene", "sea", "shadow", "shape", "silence", "sky",
+	"smoke", "snow", "snowflake", "sound", "star", "sun", "sun", "sunset",
+	"surf", "term", "thunder", "tooth", "tree", "truth", "union", "unit",
+	"violet", "voice", "water", "water", "waterfall", "wave", "wildflower", "wind",
+	"wood",
+}
+
 // NewHaikunator creates a new Haikunator with all default options
 func NewHaikunator() Haikunator {
 	return Haikunator{
-		Adjectives: []string{
-			"autumn", "hidden", "bitter", "misty", "silent", "empty", "dry", "dark",
-			"summer", "icy", "delicate", "quiet", "white", "cool", "spring", "winter",
-			"patient", "twilight", "dawn", "crimson", "wispy", "weathered", "blue",
-			"billowing", "broken", "cold", "damp", "falling", "frosty", "green",
-			"long", "late", "lingering", "bold", "little", "morning", "muddy", "old",
-			"red", "rough", "still", "small", "sparkling", "throbbing", "shy",
-			"wandering", "withered", "wild", "black", "young", "holy", "solitary",
-			"fragrant", "aged", "snowy", "proud", "floral", "restless", "divine",
-			"polished", "ancient", "purple", "lively", "nameless", "lucky", "odd", "tiny",
-			"free", "dry", "yellow", "orange", "gentle", "tight", "super", "royal", "broad",
-			"steep", "flat", "square", "round", "mute", "noisy", "hushy", "raspy", "soft",
-			"shrill", "rapid", "sweet", "curly", "calm", "jolly", "fancy", "plain", "shinny",
-		},
-		Nouns: []string{
-			"waterfall", "river", "breeze", "moon", "rain", "wind", "sea", "morning",
-			"snow", "lake", "sunset", "pine", "shadow", "leaf", "dawn", "glitter",
-			"forest", "hill", "cloud", "meadow", "sun", "glade", "bird", "brook",
-			"butterfly", "bush", "dew", "dust", "field", "fire", "flower", "firefly",
-			"feather", "grass", "haze", "mountain", "night", "pond", "darkness",
-			"snowflake", "silence", "sound", "sky", "shape", "surf", "thunder",
-			"violet", "water", "wildflower", "wave", "water", "resonance", "sun",
-			"wood", "dream", "cherry", "tree", "fog", "frost", "voice", "paper",
-			"frog", "smoke", "star", "atom", "band", "bar", "base", "block", "boat",
-			"term", "credit", "art", "fashion", "truth", "disk", "math", "unit", "cell",
-			"scene", "heart", "recipe", "union", "limit", "bread", "toast", "bonus",
-			"lab", "mud", "mode", "poetry", "tooth", "hall", "king", "queen", "lion", "tiger",
-			"penguin", "kiwi", "cake", "mouse", "rice", "coke", "hola", "salad", "hat",
-		},
+		Adjectives:  adjectives,
+		Nouns:       nouns,
 		Delimiter:   "-",
 		TokenLength: 4,
 		TokenHex:    false,
@@ -66,24 +72,19 @@ func (h *Haikunator) Haikunate() string {
 		h.TokenChars = "0123456789abcdef"
 	}
 
-	var adjective, noun string
-
-	if len(h.Adjectives) > 0 { // Random.Intn panics otherwise
-		adjective = h.Adjectives[h.Random.Intn(len(h.Adjectives))]
-	}
-
-	if len(h.Nouns) > 0 {
-		noun = h.Nouns[h.Random.Intn(len(h.Nouns))]
-	}
+	adjective := h.randomString(h.Adjectives)
+	noun := h.randomString(h.Nouns)
 
 	var token string
 
 	if len(h.TokenChars) > 0 {
 		var buffer bytes.Buffer
+
 		for i := 0; i < h.TokenLength; i++ {
 			randomIndex := h.Random.Intn(utf8.RuneCountInString(h.TokenChars))
 			buffer.WriteRune([]rune(h.TokenChars)[randomIndex])
 		}
+
 		token = buffer.String()
 	}
 
@@ -91,6 +92,18 @@ func (h *Haikunator) Haikunate() string {
 	return strings.Join(sections, h.Delimiter)
 }
 
+// Get random string from string array
+func (h *Haikunator) randomString(s []string) string {
+	size := len(s)
+
+	if size <= 0 { // Random.Intn panics otherwise
+		return ""
+	}
+
+	return s[h.Random.Intn(size)]
+}
+
+// Deletes empty strings from string array
 func deleteEmpty(s []string) []string {
 	var r []string
 	for _, str := range s {
