@@ -2,6 +2,7 @@
 
 [![Build Status](https://img.shields.io/travis/Atrox/haikunatorgo.svg?style=flat-square)](https://travis-ci.org/Atrox/haikunatorgo)
 [![Coverage Status](https://img.shields.io/coveralls/Atrox/haikunatorgo.svg?style=flat-square)](https://coveralls.io/r/Atrox/haikunatorgo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/atrox/haikunatorgo?style=flat-square)](https://goreportcard.com/report/github.com/atrox/haikunatorgo)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/Atrox/haikunatorgo)
 
 Generate Heroku-like random names to use in your go applications.
@@ -72,8 +73,8 @@ The following options are available:
 
 ```go
 Haikunator{
-  Adjectives: []string{"..."},
-  Nouns: []string{"..."},
+  Adjectives:  []string{"custom", "adjectives"},
+  Nouns:       []string{"custom", "nouns"},
   Delimiter:   "-",
   TokenLength: 4,
   TokenHex:    false,

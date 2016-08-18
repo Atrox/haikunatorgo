@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"strings"
 	"time"
-	"unicode/utf8"
 )
 
 // A Haikunator represents all options needed to use haikunate()
@@ -53,6 +52,11 @@ var nouns = []string{
 	"wood",
 }
 
+const (
+	numbers = "0123456789"
+	hex     = "0123456789abcdef"
+)
+
 // NewHaikunator creates a new Haikunator with all default options
 func NewHaikunator() Haikunator {
 	return Haikunator{
@@ -61,49 +65,58 @@ func NewHaikunator() Haikunator {
 		Delimiter:   "-",
 		TokenLength: 4,
 		TokenHex:    false,
-		TokenChars:  "0123456789",
+		TokenChars:  numbers,
 		Random:      rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
 // Haikunate generates a random Heroku-like string
 func (h *Haikunator) Haikunate() string {
-	if h.TokenHex {
-		h.TokenChars = "0123456789abcdef"
-	}
-
 	adjective := h.randomString(h.Adjectives)
 	noun := h.randomString(h.Nouns)
-
-	var token string
-
-	if len(h.TokenChars) > 0 {
-		var buffer bytes.Buffer
-
-		for i := 0; i < h.TokenLength; i++ {
-			randomIndex := h.Random.Intn(utf8.RuneCountInString(h.TokenChars))
-			buffer.WriteRune([]rune(h.TokenChars)[randomIndex])
-		}
-
-		token = buffer.String()
-	}
+	token := h.buildToken()
 
 	sections := deleteEmpty([]string{adjective, noun, token})
 	return strings.Join(sections, h.Delimiter)
 }
 
-// Get random string from string array
+func (h *Haikunator) buildToken() string {
+	var chars []rune
+
+	if h.TokenHex {
+		chars = []rune(hex)
+	} else {
+		chars = []rune(h.TokenChars)
+	}
+
+	size := len(chars)
+
+	if size <= 0 {
+		return ""
+	}
+
+	var buffer bytes.Buffer
+
+	for i := 0; i < h.TokenLength; i++ {
+		index := h.Random.Intn(size)
+		buffer.WriteRune(chars[index])
+	}
+
+	return buffer.String()
+}
+
+// Get random string from slice
 func (h *Haikunator) randomString(s []string) string {
 	size := len(s)
 
-	if size <= 0 { // Random.Intn panics otherwise
+	if size <= 0 {
 		return ""
 	}
 
 	return s[h.Random.Intn(size)]
 }
 
-// Deletes empty strings from string array
+// Deletes empty strings from slice
 func deleteEmpty(s []string) []string {
 	var r []string
 	for _, str := range s {
