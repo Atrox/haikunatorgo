@@ -7,7 +7,7 @@ import (
 )
 
 func TestDefaultUse(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haiku := haikunator.Haikunate()
 
 	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(\\d{4})$", haiku)
@@ -20,7 +20,7 @@ func TestDefaultUse(t *testing.T) {
 }
 
 func TestHexUse(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.TokenHex = true
 
 	haiku := haikunator.Haikunate()
@@ -35,7 +35,7 @@ func TestHexUse(t *testing.T) {
 }
 
 func TestDigitsUse(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.TokenLength = 9
 
 	haiku := haikunator.Haikunate()
@@ -50,7 +50,7 @@ func TestDigitsUse(t *testing.T) {
 }
 
 func TestDigitsAsHexUse(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.TokenLength = 9
 	haikunator.TokenHex = true
 
@@ -66,7 +66,7 @@ func TestDigitsAsHexUse(t *testing.T) {
 }
 
 func TestWontReturnSameForSubsequentCalls(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haiku1 := haikunator.Haikunate()
 	haiku2 := haikunator.Haikunate()
 
@@ -76,7 +76,7 @@ func TestWontReturnSameForSubsequentCalls(t *testing.T) {
 }
 
 func TestDropsToken(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.TokenLength = 0
 
 	haiku := haikunator.Haikunate()
@@ -91,7 +91,7 @@ func TestDropsToken(t *testing.T) {
 }
 
 func TestPermitsOptionalDelimiter(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.Delimiter = "."
 
 	haiku := haikunator.Haikunate()
@@ -106,7 +106,7 @@ func TestPermitsOptionalDelimiter(t *testing.T) {
 }
 
 func TestSpaceDelimiterAndNoToken(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.Delimiter = " "
 	haikunator.TokenLength = 0
 
@@ -122,7 +122,7 @@ func TestSpaceDelimiterAndNoToken(t *testing.T) {
 }
 
 func TestOneSingleWord(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.Delimiter = ""
 	haikunator.TokenLength = 0
 
@@ -138,7 +138,7 @@ func TestOneSingleWord(t *testing.T) {
 }
 
 func TestCustomChars(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.TokenChars = "A"
 
 	haiku := haikunator.Haikunate()
@@ -153,7 +153,7 @@ func TestCustomChars(t *testing.T) {
 }
 
 func TestCustomAdjectivesAndNouns(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.Adjectives = []string{"red"}
 	haikunator.Nouns = []string{"reindeer"}
 
@@ -169,7 +169,7 @@ func TestCustomAdjectivesAndNouns(t *testing.T) {
 }
 
 func TestRemoveAdjectivesAndNouns(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.Adjectives = []string{""}
 	haikunator.Nouns = []string{""}
 
@@ -185,11 +185,11 @@ func TestRemoveAdjectivesAndNouns(t *testing.T) {
 }
 
 func TestCustomRandom(t *testing.T) {
-	haikunator1 := NewHaikunator()
+	haikunator1 := New()
 	haikunator1.Random = rand.New(rand.NewSource(123))
 	haiku1 := haikunator1.Haikunate()
 
-	haikunator2 := NewHaikunator()
+	haikunator2 := New()
 	haikunator2.Random = rand.New(rand.NewSource(123))
 	haiku2 := haikunator2.Haikunate()
 
@@ -199,7 +199,7 @@ func TestCustomRandom(t *testing.T) {
 }
 
 func TestZeroLengthOptionsPanic(t *testing.T) {
-	haikunator := NewHaikunator()
+	haikunator := New()
 	haikunator.Adjectives = make([]string, 0)
 	haikunator.Nouns = make([]string, 0)
 	haikunator.TokenChars = ""

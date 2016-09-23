@@ -48,8 +48,7 @@ var nouns = []string{
 	"river", "salad", "scene", "sea", "shadow", "shape", "silence", "sky",
 	"smoke", "snow", "snowflake", "sound", "star", "sun", "sun", "sunset",
 	"surf", "term", "thunder", "tooth", "tree", "truth", "union", "unit",
-	"violet", "voice", "water", "water", "waterfall", "wave", "wildflower", "wind",
-	"wood",
+	"violet", "voice", "water", "waterfall", "wave", "wildflower", "wind", "wood",
 }
 
 const (
@@ -57,9 +56,9 @@ const (
 	hex     = "0123456789abcdef"
 )
 
-// NewHaikunator creates a new Haikunator with all default options
-func NewHaikunator() Haikunator {
-	return Haikunator{
+// New creates a new Haikunator with all default options
+func New() *Haikunator {
+	return &Haikunator{
 		Adjectives:  adjectives,
 		Nouns:       nouns,
 		Delimiter:   "-",
@@ -76,7 +75,7 @@ func (h *Haikunator) Haikunate() string {
 	noun := h.randomString(h.Nouns)
 	token := h.buildToken()
 
-	sections := deleteEmpty([]string{adjective, noun, token})
+	sections := deleteEmpty(adjective, noun, token)
 	return strings.Join(sections, h.Delimiter)
 }
 
@@ -117,7 +116,7 @@ func (h *Haikunator) randomString(s []string) string {
 }
 
 // Deletes empty strings from slice
-func deleteEmpty(s []string) []string {
+func deleteEmpty(s ...string) []string {
 	var r []string
 	for _, str := range s {
 		if str != "" {

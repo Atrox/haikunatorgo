@@ -21,11 +21,11 @@ Haikunator is pretty simple.
 package main
 
 import (
-  "github.com/atrox/haikunatorgo"
+  haikunator "github.com/atrox/haikunatorgo"
 )
 
 func main() {
-  haikunator := haikunator.NewHaikunator()
+  haikunator := haikunator.New()
 
   // default usage
   haikunator.Haikunate() // => "wispy-dust-1337"
