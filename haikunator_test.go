@@ -2,207 +2,103 @@ package haikunator
 
 import (
 	"math/rand"
+	"reflect"
 	"regexp"
 	"testing"
 )
 
-func TestDefaultUse(t *testing.T) {
-	haikunator := New()
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(\\d{4})$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
+// haikunateTest contains everything needed for the general tests
+type haikunateTest struct {
+	Name       string
+	Regex      string
+	Parameters m
 }
 
-func TestHexUse(t *testing.T) {
-	haikunator := New()
-	haikunator.TokenHex = true
+// shorter name
+type m map[string]interface{}
 
-	haiku := haikunator.Haikunate()
+func TestGeneralUsage(t *testing.T) {
+	tests := []haikunateTest{
+		// basic
+		{"default usage", `[a-z]+-[a-z]+-[0-9]{4}$`, m{}},
 
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(.{4})$", haiku)
-	if err != nil {
-		t.Error(err)
+		// token
+		{"tokenhex", `[a-z]+-[a-z]+-[0-f]{4}$`, m{"TokenHex": true}},
+		{"tokenlength", `[a-z]+-[a-z]+-[0-9]{9}$`, m{"TokenLength": 9}},
+		{"tokenlength and tokenhex", `[a-z]+-[a-z]+-[0-f]{9}$`, m{"TokenLength": 9, "TokenHex": true}},
+		{"zero tokenlength", `[a-z]+-[a-z]+$`, m{"TokenLength": 0}},
+
+		// delimiter
+		{"delimiter", `[a-z]+.[a-z]+.[0-9]{4}$`, m{"Delimiter": "."}},
+		{"delimiter and tokenlength", `[a-z]+ [a-z]+`, m{"Delimiter": " ", "TokenLength": 0}},
+		{"empty delimiter and tokenlength", `[a-z]+$`, m{"Delimiter": "", "TokenLength": 0}},
+
+		// token chars
+		{"tokenchars", `[a-z]+-[a-z]+-[x-z]{4}$`, m{"TokenChars": "xyz"}},
+
+		// adjectives and nouns
+		{"adjectives and nouns", `adjective-noun-\d{4}$`, m{"Adjectives": []string{"adjective"}, "Nouns": []string{"noun"}}},
 	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
 
-func TestDigitsUse(t *testing.T) {
-	haikunator := New()
-	haikunator.TokenLength = 9
+	for _, test := range tests {
+		t.Run(test.Name, func(t *testing.T) {
+			h := New()
 
-	haiku := haikunator.Haikunate()
+			// set specified parameters with reflection
+			val := reflect.ValueOf(h).Elem()
+			for key, value := range test.Parameters {
+				val.FieldByName(key).Set(reflect.ValueOf(value))
+			}
 
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(\\d{9})$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestDigitsAsHexUse(t *testing.T) {
-	haikunator := New()
-	haikunator.TokenLength = 9
-	haikunator.TokenHex = true
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(.{9})$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
+			haikunate := h.Haikunate()
+			matched, err := regexp.MatchString(test.Regex, haikunate)
+			if err != nil {
+				t.Error(err)
+			}
+			if !matched {
+				t.Error("Regex did not match with: ", haikunate)
+			}
+		})
 	}
 }
 
 func TestWontReturnSameForSubsequentCalls(t *testing.T) {
-	haikunator := New()
-	haiku1 := haikunator.Haikunate()
-	haiku2 := haikunator.Haikunate()
+	tests := []*Haikunator{New(), New()}
 
-	if haiku1 == haiku2 {
-		t.Error(haiku1, " matches with ", haiku2)
+	for _, h1 := range tests {
+		for _, h2 := range tests {
+			v1 := h1.Haikunate()
+			v2 := h2.Haikunate()
+			if v1 == v2 {
+				t.Error("Should not return same result", v1, v2)
+			}
+		}
 	}
 }
 
-func TestDropsToken(t *testing.T) {
-	haikunator := New()
-	haikunator.TokenLength = 0
+func TestReturnsSameForSameSeed(t *testing.T) {
+	var seed int64 = 1001
 
-	haiku := haikunator.Haikunate()
+	h1 := New()
+	h1.Random = rand.New(rand.NewSource(seed))
 
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))$", haiku)
-	if err != nil {
-		t.Error(err)
+	h2 := New()
+	h2.Random = rand.New(rand.NewSource(seed))
+
+	if h1.Haikunate() != h2.Haikunate() {
+		t.Error("Sould return same")
 	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
+	if h1.Haikunate() != h2.Haikunate() {
+		t.Error("Should return same")
 	}
-}
 
-func TestPermitsOptionalDelimiter(t *testing.T) {
-	haikunator := New()
-	haikunator.Delimiter = "."
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(\\.)((?:[a-z][a-z]+))(\\.)(\\d+)$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestSpaceDelimiterAndNoToken(t *testing.T) {
-	haikunator := New()
-	haikunator.Delimiter = " "
-	haikunator.TokenLength = 0
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))( )((?:[a-z][a-z]+))$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestOneSingleWord(t *testing.T) {
-	haikunator := New()
-	haikunator.Delimiter = ""
-	haikunator.TokenLength = 0
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestCustomChars(t *testing.T) {
-	haikunator := New()
-	haikunator.TokenChars = "A"
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("((?:[a-z][a-z]+))(-)((?:[a-z][a-z]+))(-)(AAAA)$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestCustomAdjectivesAndNouns(t *testing.T) {
-	haikunator := New()
-	haikunator.Adjectives = []string{"red"}
-	haikunator.Nouns = []string{"reindeer"}
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("(red)(-)(reindeer)(-)(\\d{4})$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestRemoveAdjectivesAndNouns(t *testing.T) {
-	haikunator := New()
-	haikunator.Adjectives = []string{""}
-	haikunator.Nouns = []string{""}
-
-	haiku := haikunator.Haikunate()
-
-	matched, err := regexp.MatchString("(\\d{4})$", haiku)
-	if err != nil {
-		t.Error(err)
-	}
-	if !matched {
-		t.Error("Regex did not match with: ", haiku)
-	}
-}
-
-func TestCustomRandom(t *testing.T) {
-	haikunator1 := New()
-	haikunator1.Random = rand.New(rand.NewSource(123))
-	haiku1 := haikunator1.Haikunate()
-
-	haikunator2 := New()
-	haikunator2.Random = rand.New(rand.NewSource(123))
-	haiku2 := haikunator2.Haikunate()
-
-	if haiku1 != haiku2 {
-		t.Error(haiku1, "does not match with ", haiku2)
-	}
 }
 
 func TestZeroLengthOptionsPanic(t *testing.T) {
-	haikunator := New()
-	haikunator.Adjectives = make([]string, 0)
-	haikunator.Nouns = make([]string, 0)
-	haikunator.TokenChars = ""
+	h := New()
+	h.Adjectives = make([]string, 0)
+	h.Nouns = make([]string, 0)
+	h.TokenChars = ""
 
-	haikunator.Haikunate() // should not panic when generating random numbers
+	h.Haikunate() // should not panic when generating random numbers
 }
