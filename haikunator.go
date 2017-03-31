@@ -19,7 +19,7 @@ type Haikunator struct {
 	Random      *rand.Rand
 }
 
-// Adjectives used by haikunator
+// default adjectives used by haikunator
 var adjectives = []string{
 	"aged", "ancient", "autumn", "billowing", "bitter", "black", "blue", "bold",
 	"broad", "broken", "calm", "cold", "cool", "crimson", "curly", "damp",
@@ -35,7 +35,7 @@ var adjectives = []string{
 	"withered", "yellow", "young",
 }
 
-// Nouns used by haikunator
+// default nouns used by haikunator
 var nouns = []string{
 	"art", "band", "bar", "base", "bird", "block", "boat", "bonus",
 	"bread", "breeze", "brook", "bush", "butterfly", "cake", "cell", "cherry",
@@ -79,6 +79,7 @@ func (h *Haikunator) Haikunate() string {
 	return strings.Join(sections, h.Delimiter)
 }
 
+// buildToken creates and builds random token
 func (h *Haikunator) buildToken() string {
 	var chars []rune
 
@@ -104,7 +105,7 @@ func (h *Haikunator) buildToken() string {
 	return buffer.String()
 }
 
-// Get random string from slice
+// randomString returns random string from slice
 func (h *Haikunator) randomString(s []string) string {
 	size := len(s)
 
@@ -115,7 +116,7 @@ func (h *Haikunator) randomString(s []string) string {
 	return s[h.Random.Intn(size)]
 }
 
-// Deletes empty strings from slice
+// deleteEmpty deletes empty strings from slice
 func deleteEmpty(s ...string) []string {
 	var r []string
 	for _, str := range s {
