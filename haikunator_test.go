@@ -86,7 +86,7 @@ func TestReturnsSameForSameSeed(t *testing.T) {
 	h2.Random = rand.New(rand.NewSource(seed))
 
 	if h1.Haikunate() != h2.Haikunate() {
-		t.Error("Sould return same")
+		t.Error("Should return same")
 	}
 	if h1.Haikunate() != h2.Haikunate() {
 		t.Error("Should return same")
