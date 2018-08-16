@@ -1,1 +1,1 @@
-module github.com/atrox/haikunatorgo
+module github.com/atrox/haikunatorgo/v2
